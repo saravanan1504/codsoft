@@ -1,0 +1,80 @@
+import tkinter as tk
+from tkinter import messagebox, simpledialog
+
+class ToDoListApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("To-Do List Application")
+        self.root.geometry("500x600")
+        self.tasks = []
+
+        self.bg_color = "#333333"
+        self.fg_color = "#FFFFFF"
+
+        self.setup_gui()
+
+    def setup_gui(self):
+        self.root.config(bg=self.bg_color)
+
+        self.title_label = tk.Label(self.root, text="To-Do List", font=("Helvetica", 24, "bold"), bg=self.bg_color, fg=self.fg_color)
+        self.title_label.pack(pady=20)
+
+        self.task_frame = tk.Frame(self.root, bg=self.bg_color)
+        self.task_frame.pack(pady=10, padx=10)
+
+        self.task_listbox = tk.Listbox(self.task_frame, font=("Helvetica", 14), bg="#555555", fg=self.fg_color, selectbackground="#777777", selectforeground=self.fg_color, border=0, highlightthickness=0)
+        self.task_listbox.pack(pady=10, padx=10, fill=tk.BOTH, expand=True)
+
+        self.button_frame = tk.Frame(self.root, bg=self.bg_color)
+        self.button_frame.pack(pady=20)
+
+        self.add_task_button = tk.Button(self.button_frame, text="Add Task", font=("Helvetica", 14), bg="#4CAF50", fg=self.fg_color, padx=20, pady=10, bd=0, command=self.add_task)
+        self.add_task_button.grid(row=0, column=0, padx=10)
+
+        self.update_task_button = tk.Button(self.button_frame, text="Update Task", font=("Helvetica", 14), bg="#2196F3", fg=self.fg_color, padx=20, pady=10, bd=0, command=self.update_task)
+        self.update_task_button.grid(row=0, column=1, padx=10)
+
+        self.delete_task_button = tk.Button(self.button_frame, text="delete Task", font=("Helvetica", 14), bg="#F44336", fg=self.fg_color, padx=20, pady=10, bd=0, command=self.delete_task)
+        self.delete_task_button.grid(row=0, column=2, padx=10)
+
+        self.exit_button = tk.Button(self.button_frame, text="Exit", font=("Helvetica", 14), bg="#9E9E9E", fg=self.fg_color, padx=20, pady=10, bd=0, command=self.root.quit)
+        self.exit_button.grid(pady=20)
+
+    def add_task(self):
+        task = simpledialog.askstring("Add Task", "Enter The Task", parent=self.root)
+        if task:
+            self.tasks.append(task)
+            self.update_task_listbox()
+
+    def update_task(self):
+        selected_task_index = self.task_listbox.curselection()
+        if selected_task_index:
+            task_index = selected_task_index[0]
+            new_task = simpledialog.askstring("Update Task", "Enter the new task:", parent=self.root)
+            if new_task:
+                self.tasks[task_index]=new_task
+                self.update_task_listbox()
+        else:
+            messagebox.showwarning("Update Task", "Please select a task to update.")
+    
+    def delete_task(self):
+        selected_task_index = self.task_listbox.curselection()
+        if selected_task_index:
+            task_index = selected_task_index[0]
+            del self.tasks[task_index]
+            self.update_task_listbox()
+        else:
+            messagebox.showwarning("Delete Task", "Please select a task to delete.")
+
+    def track_task(self):
+        self.update_task_listbox()
+
+    def update_task_listbox(self):
+        self.task_listbox.delete(0, tk.END)
+        for task in self.tasks:
+            self.task_listbox.insert(tk.END, task)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = ToDoListApp(root)
+    root.mainloop()
